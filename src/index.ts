@@ -16,7 +16,7 @@ const server = new ApolloServer({
   async function startApolloServer() {
     const { url } = await startStandaloneServer(server, {
         context: async({req}): Promise<any>=>{     
-           await contextHandler(req)
+           return await contextHandler(req)
         },
         listen: { port: parseInt(process.env.PORT as string) },
       });

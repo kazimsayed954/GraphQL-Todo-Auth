@@ -10,7 +10,7 @@ export const contextHandler = async(req:any): Promise<any> => {
 
   const excludedOperations = ["register","login"];
   if(excludedOperations.includes(req.body.operationName)){
-      return true;
+      return null;
   }
   const token = req.headers.authorization ?? '';
   let user;
