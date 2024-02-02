@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const server_1 = require("@apollo/server");
 const standalone_1 = require("@apollo/server/standalone");
 const schema_graphql_1 = require("./schema/schema.graphql");
+const dbConnection_1 = require("./utils/dbConnection");
 const dotenv_1 = require("dotenv");
 const resolvers_1 = require("./resolvers");
 const contextHandler_1 = require("./utils/contextHandler");
@@ -20,7 +21,7 @@ const server = new server_1.ApolloServer({
     typeDefs: schema_graphql_1.typeDefs,
     resolvers: resolvers_1.resolvers,
 });
-//   dbConnection();
+(0, dbConnection_1.dbConnection)();
 function startApolloServer() {
     return __awaiter(this, void 0, void 0, function* () {
         const { url } = yield (0, standalone_1.startStandaloneServer)(server, {

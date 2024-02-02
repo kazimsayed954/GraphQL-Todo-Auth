@@ -1,25 +1,44 @@
-import { GraphQLError } from "graphql";
 import { getUserByToken } from "./verifyJWT";
+import { parse, print,getIntrospectionQuery, GraphQLError } from 'graphql';
+
+const introspectionQuery = print(parse(getIntrospectionQuery()));
 
 export const contextHandler = async(req:any): Promise<any> => {
-    console.log(req.body?.operationName);
-            const excludedOperations = ['register', 'login'];
-            if(excludedOperations.includes(req.body.operationName)){
-                return null;
-            }
-            const token = req.headers.authorization ?? '';
+  if (req.body.query === introspectionQuery) {
+    return {};
+  }
 
-            const user = await getUserByToken(token);
+  const excludedOperations = ["register","login"];
+  if(excludedOperations.includes(req.body.operationName)){
+      return true;
+  }
+  const token = req.headers.authorization ?? '';
+  let user;
+  if(token){
+    user = await getUserByToken(token);
+    if(!user){
+      return {
+        error: "Unauthorized User",
+        message: "User Not Found in Database.",
+      };
+    }
 
-            if (!user)
-            // throwing a `GraphQLError` here allows us to specify an HTTP status code,
-            // standard `Error`s will have a 500 status code by default
-            throw new GraphQLError('User is not authenticated', {
-              extensions: {
-                code: 'UNAUTHENTICATED',
-                http: { status: 401 },
-              },
-            });
-      
-          return user;
+    return user;
+  }
+
+  return {
+    error: "Missing token",
+    message: "Authorization token is required for this operation.",
+  };
+
+}
+
+export const handleContextError = (error:GraphQLError) => {
+        throw new GraphQLError(error?.message, {
+            extensions: {
+              code: 'UNAUTHENTICATED',
+              http: { status: 401 },
+            },
+          });
+    
 }

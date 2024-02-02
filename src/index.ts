@@ -1,22 +1,22 @@
 import {ApolloServer} from '@apollo/server';
 import {startStandaloneServer} from '@apollo/server/standalone';
-import { typeDefs } from './schema/schema.graphql';
+import typeDefs from './schema/schema.graphql';
 import { dbConnection } from './utils/dbConnection';
 import { configDotenv } from 'dotenv';
 import { resolvers } from './resolvers';
 import { contextHandler } from './utils/contextHandler';
 configDotenv();
+dbConnection();
 
 const server = new ApolloServer({
     typeDefs,
     resolvers,
   });
 
-//   dbConnection();
   async function startApolloServer() {
     const { url } = await startStandaloneServer(server, {
-        context: async({req}:any): Promise<any>=>{
-            await contextHandler(req)
+        context: async({req}): Promise<any>=>{     
+           await contextHandler(req)
         },
         listen: { port: parseInt(process.env.PORT as string) },
       });

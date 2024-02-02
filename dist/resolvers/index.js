@@ -12,5 +12,5 @@ const Query = Object.assign(Object.assign({}, user_query_1.default), todo_query_
 const Mutation = Object.assign(Object.assign({}, user_mutation_1.default), todo_mutation_1.default);
 exports.resolvers = {
     Query,
-    // Mutation,
+    Mutation,
 };

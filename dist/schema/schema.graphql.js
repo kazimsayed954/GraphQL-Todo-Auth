@@ -8,18 +8,29 @@ type User{
   fullName:String
   email:String
   password:String
+  token:String
 }
 
 type Todo{
   title:String
   description:String
-  isDone:Boolean!
-  userId:ID!
+  isDone:Boolean
+  userId:ID
 }
 
 
 type Query {
     Todos: [Todo]
-  }
+}
 
+type Mutation{
+  register(user:createUser): User
+  login(user:createUser):User
+}
+
+input createUser{
+  fullName:String
+  email:String!
+  password:String!
+}
 `;
