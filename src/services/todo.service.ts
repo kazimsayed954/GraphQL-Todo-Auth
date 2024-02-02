@@ -15,8 +15,8 @@ export async function createTodo(todo:Todo,userId:string) {
 
 export async function updateTodo(todo:Todo,todoId:string,userId:string){
     try {
-        const data = await TodoModel.updateOne({ _id: todoId, userId }, todo);
-        return data;
+        const result = await TodoModel.updateOne({ _id: todoId, userId }, todo);
+        return result?.acknowledged;
     } catch (error) {
         console.log(error)
     }
@@ -28,5 +28,13 @@ export async function deleteTodo(todoId:string,userId:string){
         return result?.deletedCount === 1
     } catch (error) {
     console.log(error)
+    }
+}
+export async function getTodos(userId:string) {
+    try {
+        const todos = await TodoModel.find({userId});
+        return todos;
+    } catch (error) {
+            console.log(error)        
     }
 }

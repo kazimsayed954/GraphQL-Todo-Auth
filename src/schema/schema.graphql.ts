@@ -18,10 +18,11 @@ type Todo{
 
 type Query {
     #User Query
-    Todos: [Todo]
 
     #Todo Query
+    getTodos:[Todo]
 }
+
 
 type Mutation{
   #User Mutation
@@ -30,7 +31,7 @@ type Mutation{
   
   #Todo Mutation
   createTodo(todo:createTodo!):Todo 
-  updateTodo(todo:createTodo,id:ID): Todo
+  updateTodo(todo:updateTodo,id:ID): Boolean
   deleteTodo(id:ID):Boolean
 }
 
@@ -47,6 +48,12 @@ input loginInput {
 
 input createTodo {
   title:String!
+  description:String
+  isDone:Boolean
+}
+
+input updateTodo {
+  title:String
   description:String
   isDone:Boolean
 }
