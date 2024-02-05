@@ -39,7 +39,7 @@ export async function getTodos(userId:string) {
 
 export async function getTodoById(todoId:string,userId:string) {
     try {
-        const todo = await TodoModel.findOne({_id:todoId,userId});
+        const todo = await TodoModel.findOne({_id:todoId,userId}).populate("userId");
         return todo;
     } catch (error) {
         console.log(error)        

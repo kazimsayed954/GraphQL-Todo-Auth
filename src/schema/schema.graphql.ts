@@ -1,20 +1,32 @@
 const typeDefs = `#graphql
 
-type User{
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
+directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+  inheritMaxAge: Boolean
+) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
+
+type User @cacheControl(maxAge: 60){
   id:ID
   fullName:String
   email:String
-  password:String
   token:String
-}
+} 
 
 type Todo{
-  title:String
+  id:ID
+  title:String @cacheControl(maxAge:420,scope: PRIVATE)
   description:String
   isDone:Boolean
-  userId:ID
+  userId:User
   createdAt:String
   updatedAt:String
+  fullName:String
 }
 
 
@@ -25,7 +37,6 @@ type Query {
     getTodos:[Todo]
     getTodoById(id:ID):Todo
 }
-
 
 type Mutation{
   #User Mutation

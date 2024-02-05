@@ -4,6 +4,7 @@ import {startStandaloneServer} from '@apollo/server/standalone';
 import typeDefs from './schema/schema.graphql';
 import { dbConnection } from './utils/dbConnection';
 import { resolvers } from './resolvers';
+import { InMemoryLRUCache } from '@apollo/utils.keyvaluecache';
 import { contextHandler } from './utils/contextHandler';
 configDotenv();
 dbConnection();
@@ -11,6 +12,9 @@ dbConnection();
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    cache: new InMemoryLRUCache({
+      ttl: 300,
+    }),
   });
 
   async function startApolloServer() {
