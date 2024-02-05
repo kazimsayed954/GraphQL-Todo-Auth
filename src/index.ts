@@ -1,4 +1,8 @@
 import {ApolloServer} from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import express from 'express';
+import http from 'http';
 import { configDotenv } from 'dotenv';
 import {startStandaloneServer} from '@apollo/server/standalone';
 import typeDefs from './schema/schema.graphql';
@@ -6,25 +10,44 @@ import { dbConnection } from './utils/dbConnection';
 import { resolvers } from './resolvers';
 import { InMemoryLRUCache } from '@apollo/utils.keyvaluecache';
 import { contextHandler } from './utils/contextHandler';
+// @ts-ignore
+import graphqlUploadExpress from'graphql-upload/public/graphqlUploadExpress.js';
+
 configDotenv();
 dbConnection();
+
+const app = express();
+const httpServer = http.createServer(app);
+
 
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    csrfPrevention: false,
     cache: new InMemoryLRUCache({
       ttl: 300,
     }),
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 
   async function startApolloServer() {
-    const { url } = await startStandaloneServer(server, {
+ 
+    await server.start();
+    app.use(graphqlUploadExpress());
+    app.use(express.static("public"))
+    app.use(
+      '/graphql',
+      express.json(),
+      expressMiddleware(server, {
         context: async({req}): Promise<any>=>{     
-           return await contextHandler(req)
-        },
-        listen: { port: parseInt(process.env.PORT as string) },
-      });
-      console.log(`🚀  Server ready at: ${url}`);
+              return await contextHandler(req)
+          },
+      }),
+    );
+    
+    await new Promise<void>((resolve) => httpServer.listen({ port: parseInt(process.env.PORT as string)}, resolve));
+    console.log(`🚀 Server ready at http://localhost:${process.env.PORT}/graphql`);
+
   }
 
   startApolloServer().catch((err) => {

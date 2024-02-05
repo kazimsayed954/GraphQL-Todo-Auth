@@ -12,7 +12,6 @@ import { Todo } from '../../utils/types/todo.type'
     },
 
     updateTodo: async (_:any,args:{todo:Todo,id:string},context:any) => {
-        console.log('args', args);
         if (context && context.error) {
             return handleContextError(context.error)
         }

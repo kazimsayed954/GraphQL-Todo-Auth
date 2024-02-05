@@ -1,4 +1,5 @@
 const typeDefs = `#graphql
+scalar Upload
 
 enum CacheControlScope {
   PUBLIC
@@ -29,6 +30,13 @@ type Todo{
   fullName:String
 }
 
+type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+    profilePic: String
+
+  }
 
 type Query {
     #User Query
@@ -42,6 +50,7 @@ type Mutation{
   #User Mutation
   register(user:createUser): User
   login(user:loginInput):User
+  uploadProfilePic(file: Upload):File
   
   #Todo Mutation
   createTodo(todo:createTodo!):Todo 
