@@ -1,4 +1,4 @@
-import { getTodos } from "../../services/todo.service";
+import { getTodoById, getTodos } from "../../services/todo.service";
 import { handleContextError } from "../../utils/contextHandler";
 
 const TodoQuery = {
@@ -8,6 +8,14 @@ const TodoQuery = {
     }
         const todos = await getTodos(context?._id);
         return todos;
+   },
+
+   getTodoById:async (_:any,args:{id:string},context:any) => {
+    if (context && context.error) {
+        return handleContextError(context.error)
+    }
+        const todo = await getTodoById(args?.id,context?._id);
+        return todo;
    },
 }
 

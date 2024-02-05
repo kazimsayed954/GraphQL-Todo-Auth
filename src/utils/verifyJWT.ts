@@ -19,7 +19,6 @@ export async function getUserByToken(token: string) {
           message: "Token Expired.",
         };       
     } catch (error) {
-        console.log(error)
         return {
           error: "Invalid Token",
           message: "Token Expired.",

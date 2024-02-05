@@ -4,9 +4,7 @@ import TodoModel from "../models/Todo.model";
 
 export async function createTodo(todo:Todo,userId:string) {
     try {
-        console.log('todo', todo);
         const data = await TodoModel.create({...todo,userId});
-        console.log('data', data);
         return data;
     } catch (error: Error | unknown) {
         console.log(error)
@@ -35,6 +33,15 @@ export async function getTodos(userId:string) {
         const todos = await TodoModel.find({userId});
         return todos;
     } catch (error) {
-            console.log(error)        
+        console.log(error)        
+    }
+}
+
+export async function getTodoById(todoId:string,userId:string) {
+    try {
+        const todo = await TodoModel.findOne({_id:todoId,userId});
+        return todo;
+    } catch (error) {
+        console.log(error)        
     }
 }

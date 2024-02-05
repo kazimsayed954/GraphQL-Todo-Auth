@@ -13,6 +13,8 @@ type Todo{
   description:String
   isDone:Boolean
   userId:ID
+  createdAt:String
+  updatedAt:String
 }
 
 
@@ -21,6 +23,7 @@ type Query {
 
     #Todo Query
     getTodos:[Todo]
+    getTodoById(id:ID):Todo
 }
 
 
