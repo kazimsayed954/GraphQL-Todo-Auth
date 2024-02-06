@@ -1,4 +1,4 @@
 import { Redis } from "ioredis";
 
 
-export const redisClient:any = new Redis();
+export const redisClient:Redis = new Redis();
