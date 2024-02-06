@@ -17,7 +17,12 @@ type User @cacheControl(maxAge: 60){
   fullName:String
   email:String
   token:String
+  profileId:ProfileImage
 } 
+
+type ProfileImage {
+  url:String
+}
 
 type Todo{
   id:ID
@@ -40,6 +45,7 @@ type File {
 
 type Query {
     #User Query
+    getUserById:User
 
     #Todo Query
     getTodos:[Todo]

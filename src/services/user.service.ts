@@ -35,6 +35,16 @@ export async function loginUser(user: User) {
     }
 }
 
+export async function getUserById(userId: string) {
+    try {
+        const userData = await UserModel.findOne({ _id: userId }).populate("profileId");
+        if (!userData) throw new Error("Not Found User");
+        return userData;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export async function uploadProfile(userId: string, file: any) {
     const baseUrl = 'http://localhost:7000';
     try {
