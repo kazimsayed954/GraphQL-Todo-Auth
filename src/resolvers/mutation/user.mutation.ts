@@ -5,11 +5,27 @@ import { GraphQLError } from "graphql";
 
 const UserMutation = {
     register: async (_: any, args: { user: User; }) => {
-        const data = await registerUser(args?.user);
+        const data: any = await registerUser(args?.user);
+        if (data?.error) {
+            throw new GraphQLError(data?.error, {
+                extensions: {
+                    code: data?.code,
+                    http: { status: data?.status },
+                },
+            });
+        }
         return data;
     },
     login: async (_: any, args: { user: User; }) => {
         const data = await loginUser(args?.user);
+        if (data?.error) {
+            throw new GraphQLError(data?.error, {
+                extensions: {
+                    code: data?.code,
+                    http: { status: data?.status },
+                },
+            });
+        }
         return data;
     },
     uploadProfilePic: async (_: any, args: any, context: any) => {

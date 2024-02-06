@@ -23,9 +23,22 @@ export async function loginUser(user: User) {
     try {
         const { email, password } = user;
         const userData = await UserModel.findOne({ email });
-        if (!userData) throw new Error("Not Found User");
+        if (!userData) {
+            return {
+                error: "User Not Found",
+                code: "UNAUTHORIZED",
+                status: 401
+            };
+        };
         const isPasswordMatch = await argon.verify(userData.password, password);
-        if (!isPasswordMatch) throw new Error("Wrong Password Provided");
+
+        if (!isPasswordMatch) {
+            return {
+                error: "Wrong Password Provided",
+                code: "UNAUTHORIZED",
+                status: 401
+            };
+        };
         const jwtToken = jwt.sign({ id: userData.id }, process.env.JWT_SECRET as string, { expiresIn: '12h' });
         const { password: pwd, ...rest } = userData;
         return { rest, token: jwtToken };
@@ -38,7 +51,13 @@ export async function loginUser(user: User) {
 export async function getUserById(userId: string) {
     try {
         const userData = await UserModel.findOne({ _id: userId }).populate("profileId");
-        if (!userData) throw new Error("Not Found User");
+        if (!userData) {
+            return {
+                error: "User Not Found",
+                code: "UNAUTHORIZED",
+                status: 401
+            };
+        };
         return userData;
     } catch (error) {
         console.log(error);
@@ -65,7 +84,7 @@ export async function uploadProfile(userId: string, file: any) {
         const uniqueFileName = `${filenameId}${filename}`;
         const pathName = path.join(rootDirectory, 'public', 'images', uniqueFileName);
         await stream.pipe(fs.createWriteStream(pathName));
-        const profilePic:string = `${baseUrl}/images/${uniqueFileName}`;
+        const profilePic: string = `${baseUrl}/images/${uniqueFileName}`;
         let profile: any = null;
         profile = await ProfileImageModel.findOne({ userId });
         if (profile) {
