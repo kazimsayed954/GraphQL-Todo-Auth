@@ -7,4 +7,4 @@ export const dbConnection = async () => {
     } catch (error) {
         console.log(error);
     }
-}
+};

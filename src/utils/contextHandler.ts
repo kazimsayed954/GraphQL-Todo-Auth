@@ -1,22 +1,22 @@
 import { getUserByToken } from "./verifyJWT";
-import { parse, print,getIntrospectionQuery, GraphQLError } from 'graphql';
+import { parse, print, getIntrospectionQuery, GraphQLError } from 'graphql';
 
 const introspectionQuery = print(parse(getIntrospectionQuery()));
 
-export const contextHandler = async(req:any): Promise<any> => {
+export const contextHandler = async (req: any): Promise<any> => {
   if (req.body.query === introspectionQuery) {
     return {};
   }
 
-  const excludedOperations = ["register","login"];
-  if(excludedOperations.includes(req.body.operationName)){
-      return null;
+  const excludedOperations = ["register", "login"];
+  if (excludedOperations.includes(req.body.operationName)) {
+    return null;
   }
   const token = req.headers.authorization ?? '';
   let user;
-  if(token){
+  if (token) {
     user = await getUserByToken(token);
-    if(!user){
+    if (!user) {
       return {
         error: "Unauthorized User",
         message: "User Not Found in Database.",
@@ -31,14 +31,14 @@ export const contextHandler = async(req:any): Promise<any> => {
     message: "Authorization token is required for this operation.",
   };
 
-}
+};
 
-export const handleContextError = (error:GraphQLError) => {
-        throw new GraphQLError(error?.message, {
-            extensions: {
-              code: 'UNAUTHENTICATED',
-              http: { status: 401 },
-            },
-          });
-    
-}
+export const handleContextError = (error: GraphQLError) => {
+  throw new GraphQLError(error?.message, {
+    extensions: {
+      code: 'UNAUTHENTICATED',
+      http: { status: 401 },
+    },
+  });
+
+};

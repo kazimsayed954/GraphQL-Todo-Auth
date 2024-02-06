@@ -59,7 +59,6 @@ export async function uploadProfile(userId: string, file: any) {
         let profile: any = null;
         profile = await ProfileImageModel.findOne({ userId });
         if (profile) {
-
             const existingImagePath = path.join(rootDirectory, 'public', 'images', profile.url.split('/').pop());
             fs.unlink(existingImagePath, (err) => {
                 if (err) {

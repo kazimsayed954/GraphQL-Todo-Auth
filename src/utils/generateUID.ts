@@ -1,9 +1,9 @@
-var MyLib = {
+const MyLib = {
     //Max id guaranted to be unique will be 999 999 999. 
     //Add more zeros to increase the value.
-    lastUid : 100000000, 
+    lastUid: 100000000,
 
-    generateUid : function(){
+    generateUid: function () {
         this.lastUid++;
 
         //Way to get a random int value betwen min and max: 
