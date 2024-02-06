@@ -8,7 +8,7 @@ const MyLib = {
 
         //Way to get a random int value betwen min and max: 
         //Math.floor(Math.random() * (max - min) ) + min;
-        var randValue = Math.floor(Math.random() * (99999 - 10000)) + 10000;
+        let randValue = Math.floor(Math.random() * (99999 - 10000)) + 10000;
 
         return Number(this.lastUid.toString() + randValue);
     }
