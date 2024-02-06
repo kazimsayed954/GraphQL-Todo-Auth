@@ -65,7 +65,7 @@ export async function uploadProfile(userId: string, file: any) {
         const uniqueFileName = `${filenameId}${filename}`;
         const pathName = path.join(rootDirectory, 'public', 'images', uniqueFileName);
         await stream.pipe(fs.createWriteStream(pathName));
-        const profilePic = `${baseUrl}/images/${uniqueFileName}`;
+        const profilePic:string = `${baseUrl}/images/${uniqueFileName}`;
         let profile: any = null;
         profile = await ProfileImageModel.findOne({ userId });
         if (profile) {
