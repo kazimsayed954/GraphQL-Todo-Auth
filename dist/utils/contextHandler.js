@@ -9,27 +9,43 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.contextHandler = void 0;
-const graphql_1 = require("graphql");
+exports.handleContextError = exports.contextHandler = void 0;
 const verifyJWT_1 = require("./verifyJWT");
+const graphql_1 = require("graphql");
+const introspectionQuery = (0, graphql_1.print)((0, graphql_1.parse)((0, graphql_1.getIntrospectionQuery)()));
 const contextHandler = (req) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
-    console.log((_a = req.body) === null || _a === void 0 ? void 0 : _a.operationName);
-    const excludedOperations = ['register', 'login'];
+    var _a;
+    if (req.body.query === introspectionQuery) {
+        return {};
+    }
+    const excludedOperations = ["register", "login"];
     if (excludedOperations.includes(req.body.operationName)) {
         return null;
     }
-    const token = (_b = req.headers.authorization) !== null && _b !== void 0 ? _b : '';
-    const user = yield (0, verifyJWT_1.getUserByToken)(token);
-    if (!user)
-        // throwing a `GraphQLError` here allows us to specify an HTTP status code,
-        // standard `Error`s will have a 500 status code by default
-        throw new graphql_1.GraphQLError('User is not authenticated', {
-            extensions: {
-                code: 'UNAUTHENTICATED',
-                http: { status: 401 },
-            },
-        });
-    return user;
+    const token = (_a = req.headers.authorization) !== null && _a !== void 0 ? _a : '';
+    let user;
+    if (token) {
+        user = yield (0, verifyJWT_1.getUserByToken)(token);
+        if (!user) {
+            return {
+                error: "Unauthorized User",
+                message: "User Not Found in Database.",
+            };
+        }
+        return user;
+    }
+    return {
+        error: "Missing token",
+        message: "Authorization token is required for this operation.",
+    };
 });
 exports.contextHandler = contextHandler;
+const handleContextError = (error) => {
+    throw new graphql_1.GraphQLError(error === null || error === void 0 ? void 0 : error.message, {
+        extensions: {
+            code: 'UNAUTHENTICATED',
+            http: { status: 401 },
+        },
+    });
+};
+exports.handleContextError = handleContextError;

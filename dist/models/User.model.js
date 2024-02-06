@@ -28,5 +28,6 @@ const User = new mongoose_1.Schema({
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    profileId: { type: mongoose_1.Schema.Types.ObjectId, ref: "ProfileImage", default: null }
 });
 exports.default = mongoose_1.default.model("User", User);

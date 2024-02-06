@@ -46,10 +46,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginUser = exports.registerUser = void 0;
+exports.uploadProfile = exports.loginUser = exports.registerUser = void 0;
 const argon = __importStar(require("argon2"));
 const User_model_1 = __importDefault(require("../models/User.model"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
+const ProfileImage_model_1 = __importDefault(require("../models/ProfileImage.model"));
+const nanoid_1 = require("nanoid");
 function registerUser(user) {
     return __awaiter(this, void 0, void 0, function* () {
         const { fullName, email, password } = user;
@@ -71,7 +75,7 @@ function loginUser(user) {
             const userData = yield User_model_1.default.findOne({ email });
             if (!userData)
                 throw new Error("Not Found User");
-            const isPasswordMatch = yield argon.verify(password, userData.password);
+            const isPasswordMatch = yield argon.verify(userData.password, password);
             if (!isPasswordMatch)
                 throw new Error("Wrong Password Provided");
             const jwtToken = jsonwebtoken_1.default.sign({ id: userData.id }, process.env.JWT_SECRET, { expiresIn: '12h' });
@@ -84,3 +88,26 @@ function loginUser(user) {
     });
 }
 exports.loginUser = loginUser;
+function uploadProfile(userId, file) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const rootDirectory = process.cwd();
+            const { createReadStream, filename, mimetype, encoding } = yield file;
+            const stream = createReadStream();
+            const filenameId = (0, nanoid_1.nanoid)();
+            const pathName = path_1.default.join(rootDirectory, 'public', 'images', `${filenameId}${filename}`);
+            yield stream.pipe(fs_1.default.createWriteStream(pathName));
+            const data = yield ProfileImage_model_1.default.create({ url: `http://localhost:7000/images/${filename}` });
+            const profilePic = yield User_model_1.default.findOneAndUpdate({ _id: userId }, { profileId: data === null || data === void 0 ? void 0 : data._id }, { new: true });
+            console.log('data', data);
+            console.log('profilePic', profilePic);
+            return {
+                profilePic: `http://localhost:7000/images/${filename}`
+            };
+        }
+        catch (error) {
+            console.log(error);
+        }
+    });
+}
+exports.uploadProfile = uploadProfile;

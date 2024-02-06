@@ -1,7 +1,5 @@
-import path from "path";
-import { loginUser, registerUser } from "../../services/user.service";
+import { loginUser, registerUser, uploadProfile } from "../../services/user.service";
 import { User } from '../../utils/types/user.type'
-import fs from "fs";
 import { handleContextError } from "../../utils/contextHandler";
 
 const UserMutation = {
@@ -18,14 +16,9 @@ const UserMutation = {
             return handleContextError(context.error)
         }
         const {file} = args;
-        const rootDirectory = process.cwd();
-        const { createReadStream, filename, mimetype, encoding } = await file?.file;
-        const stream = createReadStream();
-        const pathName = path.join(rootDirectory, 'public', 'images', filename);
-        await stream.pipe(fs.createWriteStream(pathName))
-        return {
-            profilePic:`http://localhost:7000/images/${filename}`
-        }
+        const data = await uploadProfile(context?._id,file.file);
+        return data;
+        
     }
 }
 
