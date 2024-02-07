@@ -7,7 +7,6 @@ import { configDotenv } from 'dotenv';
 import typeDefs from './schema/schema.graphql';
 import { dbConnection } from './utils/dbConnection';
 import { resolvers } from './resolvers';
-import { InMemoryLRUCache } from '@apollo/utils.keyvaluecache';
 import { contextHandler } from './utils/contextHandler';
 
 // @ts-ignore
@@ -24,9 +23,6 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   csrfPrevention: false,
-  cache: new InMemoryLRUCache({
-    ttl:3,
-  }),
   plugins: [
     ApolloServerPluginDrainHttpServer({ httpServer }),
   ],

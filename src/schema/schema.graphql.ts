@@ -25,7 +25,7 @@ type ProfileImage {
 }
 
 type Todo{
-  id:ID
+  _id:ID
   title:String @cacheControl(maxAge:420,scope: PRIVATE)
   description:String
   isDone:Boolean
